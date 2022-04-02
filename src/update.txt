@@ -1,0 +1,336 @@
+updateCatgory.js---frontend
+
+import React ,{useState,useEffect}from 'react'
+import Base from '../core/Base'
+import { isAuthenticated } from '../auth/helper'
+import { Link } from 'react-router-dom'
+import { updateCategory,getCategory } from './helper/adminapicall'
+
+const UpdateCategory=({match})=> {
+    const {user, token} = isAuthenticated();
+    const [values,setvalues] = useState({name:'',error:false,success:false})
+    
+    const{name,error,success}=values
+    const goBack = ()=>(
+        <div className='mt-3'>
+            <Link className='btn btn-sm btn-success mb-3 rounded' to='/admin/dashboard'>Admin Home</Link>
+        </div>
+    )
+
+    const preload =(categoryId)=>{getCategory(categoryId).then(data=>
+        {if(data.error){
+            setvalues({...values,error:data.error})
+        }else{
+            setvalues({...values,name:data.name})
+        }
+    }
+    )}
+
+    useEffect(() => {
+        preload(match.params.categoryId);
+      }, []);
+    const handleChange = (event)=>{
+        setvalues({...values,error:'',name:event.target.value})
+       
+        // backend request fired
+       
+    }
+
+
+
+    const onSubmit=(event)=>{
+        event.preventDefault();
+        setvalues({...values,error:''})
+         //backend request fired
+        updateCategory(match.params.categoryId,user._id,token,{name}).then(data=>{if(data.error){
+            setvalues({...values,error:true,success:false})
+        }else{
+            setvalues({...values,error:false,success:true,name:''})
+        }})
+    }
+
+    const successMessage=()=>{ if(success){
+        return <h4 className='text-success'>Category updated Successfully!!</h4>
+    }}
+
+    const warningMessage=()=>{
+        if(error){
+            return <h4 className='text-danger'>failed to update category</h4>
+    }}
+     const myCategoryForm=()=>(
+
+        <form>
+            <div className="form-group">
+                <p className='font-weight-bold'>Enter the category</p>
+                <input type='text' className='form-control my-3' required placeholder='For ex: Summer' autoFocus onChange={handleChange} value={name}/>
+                <button className='btn btn-outline-success rounded ' onClick={onSubmit} >update Category</button>
+                {/* on click */}
+            </div>
+           
+        </form>
+     )
+
+    return (
+        <Base title='Update a category here' description='update category for new t-shirt' className=' container bg-success p-4'>
+            <div className="row bg-white rounded">
+                <div className='col-md-8 offset-md-2'>
+                    {successMessage()}
+                    {warningMessage()}
+                    {myCategoryForm()}
+                    {goBack()}
+                </div>
+            </div>
+        </Base>
+    )
+}
+
+export default UpdateCategory
+
+
+---------------------------------------------------------------------------------------
+adminapicalls.js
+
+import { API } from "../../Backend";
+
+// category calls
+export const createCategory=(userId, token,category)=>{
+    return fetch(`${API}/category/create/${userId}`,{
+        method:'POST',
+        headers:{
+        Accept:'application/json',
+        'Content-Type':'application/json',
+        Authorization:`Bearer ${token}`},
+        body : JSON.stringify(category)
+    }
+    
+    ).then(response=>{return response.json()}).catch(err=>console.log(err))
+}
+
+// get all categories
+export const getCategories=()=>{
+    return fetch(`${API}/categories`,{method:'GET'}).then(response=>{return response.json()}).catch(err=>console.log(err))
+}
+
+
+// get A category
+
+export const getCategory = (categoryId)=>{
+    return fetch(`${API}/category/${categoryId}`,{method:'GET'}).then(response=>{return response.json()}).catch(err=>console.log(err))
+}
+
+
+// update category
+export const updateCategory = (categoryId,userId,token,category)=>{  return fetch(`${API}/category/${categoryId}/${userId}`,{
+    method:'PUT',
+    headers:{
+    Accept:'application/json',
+    Authorization:`Bearer ${token}`},
+    body : JSON.stringify(category)
+}).then(response=>{return response.json()}).catch(err=>console.log(err))}
+
+// delete category
+
+export const deleteCategory = (categoryId,userId,token)=>{  return fetch(`${API}/category/${categoryId}/${userId}`,{
+    method:'DELETE',
+    headers:{
+    Accept:'application/json',
+    Authorization:`Bearer ${token}`},
+}).then(response=>{return response.json()}).catch(err=>console.log(err))}
+
+// product calls
+
+// create a product
+export const createProduct=(userId,token,product)=>{
+    return fetch(`${API}/product/create/${userId}`,{
+        method:'POST',
+        headers:{
+        Accept:'application/json',
+        Authorization:`Bearer ${token}`},
+        body : product
+    }
+    
+    ).then(response=>{return response.json()}).catch(err=>console.log(err))}
+
+// get all product
+export const getProducts=()=>{
+        return fetch(`${API}/product`,{method:'GET'}).then(response=>{return response.json()}).catch(err=>console.log(err))
+    }
+
+
+
+// get a product 
+
+export const getProduct=(productId)=>{
+    return fetch(`${API}/product/${productId}`,{method:'GET'}).then(response=>{return response.json()}).catch(err=>console.log(err))
+}
+
+// update a product
+
+export const updateProduct=(productId,userId,token,product)=>{
+    return fetch(`${API}/product/${productId}/${userId}`,{
+        method:'PUT',
+        headers:{
+        Accept:'application/json',
+        Authorization:`Bearer ${token}`},
+        body : product
+    }).then(response=>{return response.json()}).catch(err=>console.log(err))}
+
+//  delete a product
+
+export const deleteProduct=(productId,userId,token)=>{
+    return fetch(`${API}/product/${productId}/${userId}`,{
+        method:'Delete',
+        headers:{
+        Accept:'application/json',
+        Authorization:`Bearer ${token}`}
+        
+    }).then(response=>{return response.json()}).catch(err=>console.log(err))}
+    
+    
+------------------------------------------------------------------------------------------------------------
+
+import React from 'react'
+import {BrowserRouter,Switch,Route} from 'react-router-dom'
+import AdminRoute from './auth/helper/AdminRoutes';
+import PrivateRoute from './auth/helper/PrivateRoutes';
+import Home from './core/Home'
+import Signin from './user/Signin';
+import Signup from './user/Signup';
+import UserDashBoard from './user/UserDashBoard';
+import AdminDashBoard from './user/AdminDashBoard';
+import AddCategory from './admin/AddCategory';
+import ManageCategories from './admin/ManageCategories';
+import AddProduct from './admin/AddProduct';
+import ManageProducts from './admin/ManageProducts';
+import UpdateProduct from './admin/UpdateProduct';
+import UpdateCategory from './admin/UpdateCategory';
+ function Routes() {
+    return (
+        
+            <BrowserRouter>
+            <Switch>
+                <Route path='/' exact component={Home}/>
+                <Route path='/signup' exact component={Signup}/>
+                <Route path='/signin' exact component={Signin}/>
+                <PrivateRoute path='/user/dashboard' exact component={UserDashBoard}/>
+                <AdminRoute path='/admin/dashboard' exact component={AdminDashBoard}/>
+                 <AdminRoute path='/admin/create/category' exact component={AddCategory}/>
+                 <AdminRoute path='/admin/categories' exact component={ManageCategories}/>
+                 <AdminRoute path='/admin/create/product' exact component={AddProduct}/>
+                 <AdminRoute path='/admin/products' exact component={ManageProducts}/>
+                 <AdminRoute path='/admin/product/update/:productId' exact component={UpdateProduct}/>
+                 <AdminRoute path='/admin/category/update/:categoryId' exact component={UpdateCategory}/>
+            </Switch>
+            </BrowserRouter>
+        
+    )
+}
+
+export default Routes;
+    
+------------------------------------------------------------------------------------------------------------
+backend
+
+const Category= require('../models/category');
+
+// middle ware to get Category by id this will help in in param
+exports.getCategoryById=(req,res,next,id)=>{
+
+    Category.findById(id).exec((err,category)=>{
+        if(err || !category){
+            return res.status(400).json({
+                error:'category not in DB'
+            });
+        }
+       req.category=category;
+       console.log(req.category)
+       next();
+    })
+    
+}
+// used to create category
+exports.createCategory=(req,res)=>{
+    const category = new Category(req.body);
+    category.save((err,category)=>{
+        if(err){
+            return res.status(400).json({
+                error:'Not able to save not in DB'
+            });
+        }
+         res.json(category);
+    });
+}
+// used to get a single category with the help of middle ware getCagetory
+exports.getCategory=(req,res)=>{
+    console.log(req.category)
+   return res.json(req.category)
+};
+// used to get all the categories
+exports.getAllCategory=(req,res)=>{
+    Category.find({}).exec((err,categorises)=>{
+        if(err){
+            return res.status(400).json({
+                error:'category not in DB'
+            });
+        }
+        return res.json(categorises);  
+    })
+};
+
+exports.updateCategory=(req,res)=>{
+    const category =req.category;
+    console.log(category)
+    category.name=req.body.name;
+    category.save((err,updatedCategory)=>{
+        if(err){
+            return res.status(400).json({
+                error:'Failed to update category'
+            });
+        }
+        return res.json(updatedCategory)
+    });
+}
+// controller to delete category
+exports.removeCategory = (req,res)=>{
+    const category = req.category;
+    category.remove((err,category)=>{
+        if(err){
+            return res.status(400).json({
+                error:`Failed to delete this ${category.name}`
+            });
+        }
+        return res.json({message:`successfully deleted ${category.name}`});
+    })
+}
+-----------------------------------------------------
+
+routes category.js
+
+const express= require('express');
+const router= express.Router();
+// category controller
+const {getCategoryById,createCategory,getAllCategory,getCategory,updateCategory,removeCategory} = require('../controllers/category');
+// authentication controller
+const {isAuthenticated,isAdmin,isSignedIn} = require('../controllers/authentication');
+// User controller
+const {getUserbyId} = require('../controllers/user');
+// params
+router.param('userId',getUserbyId);
+router.param('categoryId',getCategoryById);
+
+// routers 
+// router to create and save category
+router.post('/category/create/:userId',isSignedIn,isAuthenticated,isAdmin,createCategory);
+// router to get a single category
+router.get('/category/:categoryId',getCategory);
+// router to get All category
+router.get('/categories',getAllCategory);
+
+// update route
+
+router.put('/category/:categoryId/:userId',isSignedIn,isAuthenticated,isAdmin,updateCategory);
+
+// delete 
+
+router.delete('/category/:categoryId/:userId',isSignedIn,isAuthenticated,isAdmin,removeCategory)
+module.exports = router;
