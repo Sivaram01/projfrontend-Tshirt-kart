@@ -2,7 +2,7 @@ import React , {useState, useEffect} from 'react'
 import Base from './Base'
 import Card from './Card'
 import { loadCart } from './helper/CartHelper'
-import StripeChekout from './StripeChekout'
+// import StripeChekout from './StripeChekout'
 import PaymentB from './paymentB'
 
 
@@ -28,13 +28,13 @@ const Cart = () =>  {
        </div>
      )
    }
-   const loadCheckout = () => {
-     return(
-       <div>
-         <h2 className="text-white">checkout</h2>
-       </div>
-     )
-   }
+  //  const loadCheckout = () => {
+  //    return(
+  //      <div>
+  //        <h2 className="text-white">checkout</h2>
+  //      </div>
+  //    )
+  //  }
  
    
 
