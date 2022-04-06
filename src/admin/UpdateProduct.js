@@ -25,7 +25,7 @@ const UpdateProduct = ({match}) => {
     formData: ""
   });
 
-   const {name , description, price, stock,  categories, category, loading , error, createdProduct, getRedirect, formData } = values
+   const {name , description, price, stock,  categories , error, createdProduct, formData } = values
 
    const preload = (productId) => {
      getAproduct(productId).then(data => {
@@ -41,7 +41,6 @@ const UpdateProduct = ({match}) => {
             price: data.price,
             stock: data.stock,
             category: data.category._id,
-            stock: data.stock,
             formData: new FormData(),
            
          });
@@ -63,7 +62,7 @@ const UpdateProduct = ({match}) => {
 
  useEffect(() => {
    preload(match.params.productId)
- }, [])
+ })
  
 
  const onSubmit = (event) => {

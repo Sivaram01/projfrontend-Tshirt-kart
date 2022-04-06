@@ -25,7 +25,7 @@ const AddProduct = () => {
     formData: ""
   });
 
-   const {name , description, price, stock,  categories, category, loading , error, createdProduct, getRedirect, formData } = values
+   const {name , description, price, stock,  categories, error, createdProduct, formData } = values
 
    const preload = () => {
      getCategories().then(data => {
@@ -39,7 +39,7 @@ const AddProduct = () => {
    }
  useEffect(() => {
    preload()
- }, [])
+ })
  
 
  const onSubmit = (event) => {

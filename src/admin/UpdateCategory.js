@@ -25,7 +25,7 @@ const UpdateCategory = ({match}) => {
 
   useEffect(() => {
     preload(match.params.categoryId);
-  }, []);
+  });
 
   const handleChange = (event) => {
     setvalues({...values,error:'', name:event.target.value})
