@@ -1,5 +1,4 @@
 import React , {useState, useEffect} from 'react'
-import API from '../backend'
 import Base from './Base'
 import Card from './Card'
 
@@ -32,7 +31,7 @@ export default function Home() {
   return (
     <Base  title= "Welcome To Tshirt Kart" description='Shop Your Favorite Tshirts'>
       <div className="row text-center">
-          <h1 className="text-white"></h1>
+          {/* <h1 className="text-white"></h1> */}
           <div className="row">
              {products.map((product , index) => {
                return(
