@@ -51,7 +51,7 @@ import '.././styles.css';
      }
 
     return (
-      <div className="card text-white bg-dark  mb-3 card-hover ">
+      <div className="card text-white bg-dark  mb-4 card-hover ">
         <div className="card-header lead  bg-success">{cardTitle} </div>
         <div className="card-body">
           {getAredirect(redirect)}
