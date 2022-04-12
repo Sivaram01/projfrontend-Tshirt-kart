@@ -1,6 +1,6 @@
 import React , {useState, useEffect} from 'react'
 import { cartEmpty, loadCart } from './helper/CartHelper'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 
 import { getmeToken, processPayment } from './helper/paymentBhelper'
 import { createOrder } from './helper/orderHelper'
@@ -65,8 +65,8 @@ import DropIn from 'braintree-web-drop-in-react'
              console.log('payment Success')
             const orderData = {
               products: products,
-              transactions_id: response.transactions.id,
-              amount: response.transactions.amount
+              transaction_id: response.transaction.id,
+              amount: response.transaction.amount
             }
             createOrder(userId , token , orderData);
             cartEmpty(() => {
