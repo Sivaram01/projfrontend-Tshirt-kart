@@ -103,6 +103,7 @@ import DropIn from 'braintree-web-drop-in-react'
     <div className='mt-5 pt-5'>
       
      <h3 className='text-white'>Your Bill is {getFinalAmount()} $ </h3>
+     <p className='text-white'> DemoCardId: 378282246310005</p>
      {showbtdropIn()}
     </div>
   )
